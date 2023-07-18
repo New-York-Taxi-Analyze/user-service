@@ -1,0 +1,75 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.1.1'
+	id 'io.spring.dependency-management' version '1.1.0'
+	id 'org.flywaydb.flyway' version '7.15.0'
+}
+
+group = 'com.newyorktaxi'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	sourceCompatibility = JavaVersion.VERSION_17
+}
+
+project.ext {
+	springBootVersion = '3.1.1'
+	mapStructVersion = '1.5.3.Final'
+	lombokMapstructBindingVersion = '0.2.0'
+	lombokVersion = '1.18.+'
+}
+
+repositories {
+	mavenCentral()
+}
+
+compileJava {
+	options.compilerArgs += [
+			'-Amapstruct.suppressGeneratorTimestamp=true',
+			'-Amapstruct.suppressGeneratorVersionInfoComment=true',
+			'-Amapstruct.defaultComponentModel=spring',
+			'-Amapstruct.defaultInjectionStrategy=constructor'
+	]
+}
+
+flyway {
+	url = 'jdbc:postgresql://localhost:5557/service'
+	user = 'service'
+	password = 'service'
+	baselineOnMigrate = true
+	baselineVersion = '1.0' // Specify the version to use for baseline
+}
+
+dependencies {
+	implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-netflix-eureka-client', version: '4.0.2'
+
+	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: springBootVersion
+	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-actuator', version: springBootVersion
+	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version: springBootVersion
+	implementation group: 'org.hibernate.validator', name: 'hibernate-validator', version: '8.0.0.Final'
+
+	implementation group: 'org.flywaydb', name: 'flyway-core', version: '9.19.1'
+	implementation group: 'org.postgresql', name: 'postgresql', version: '42.3.8'
+
+	implementation group: 'org.keycloak', name: 'keycloak-admin-client', version: '22.0.0'
+	implementation group: 'org.jboss.resteasy', name: 'resteasy-client', version: '6.2.4.Final'
+
+	// mapstruct for object mapping
+	compileOnly group: 'org.mapstruct', name: 'mapstruct', version: mapStructVersion
+	testCompileOnly group: 'org.mapstruct', name: 'mapstruct', version: mapStructVersion
+	annotationProcessor group: 'org.mapstruct', name: 'mapstruct-processor', version: mapStructVersion
+	testAnnotationProcessor group: 'org.mapstruct', name: 'mapstruct-processor', version: mapStructVersion
+
+	// lombok for getter, setter, builder, etc
+	annotationProcessor group: 'org.projectlombok', name: 'lombok-mapstruct-binding', version: lombokMapstructBindingVersion
+	compileOnly group: 'org.projectlombok', name: 'lombok', version: lombokVersion
+	testCompileOnly group: 'org.projectlombok', name: 'lombok', version: lombokVersion
+	annotationProcessor group: 'org.projectlombok', name: 'lombok', version: lombokVersion
+	testAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: lombokVersion
+
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}

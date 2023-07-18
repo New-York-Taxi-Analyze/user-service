@@ -1,0 +1,40 @@
+server:
+  port: 8089
+
+spring:
+  application:
+    name: user-service
+  datasource:
+    url: jdbc:postgresql://localhost:5557/service
+    username: service
+    password: service
+  flyway:
+    enabled: true
+    schemas: public
+
+keycloak:
+  server-url: http://localhost:8099
+  realm: newyorktaxi
+  client-id: newyorktaxiclient
+  client-secret: d1JbuRKG2iS0tveThqFinwO1cMAGt1xm
+
+info:
+  app:
+    name: user-service
+    description: User Service
+    version: 0.0.1-SNAPSHOT
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+
+eureka:
+  instance:
+    prefer-ip-address: false
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    serviceUrl:
+      defaultZone: http://localhost:8070/eureka/

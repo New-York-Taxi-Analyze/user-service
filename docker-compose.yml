@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  user-service-db:
+    image: postgres:13
+    container_name: user-service-db
+    ports:
+      - "5557:5432"
+    environment:
+      POSTGRES_DB: service
+      POSTGRES_USER: service
+      POSTGRES_PASSWORD: service
+  user-service-app:
+    image: newyorktaxi/user-service-app:latest
+    container_name: user-service-app
+    ports:
+      - "8089:8089"
+    depends_on:
+      - user-service-db
