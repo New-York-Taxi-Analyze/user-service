@@ -10,10 +10,15 @@ services:
       POSTGRES_DB: service
       POSTGRES_USER: service
       POSTGRES_PASSWORD: service
+
   user-service-app:
-    image: newyorktaxi/user-service-app:latest
+    image: slima4/user-service:latest
     container_name: user-service-app
     ports:
       - "8089:8089"
     depends_on:
       - user-service-db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://user-service-db:5432/service
+      SPRING_DATASOURCE_USERNAME: service
+      SPRING_DATASOURCE_PASSWORD: service

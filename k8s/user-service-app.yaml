@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-service-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user-service-app
+  template:
+    metadata:
+      labels:
+        app: user-service-app
+    spec:
+      containers:
+        - name: user-service-app
+          image: slima4/user-service:latest
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:postgresql://user-service-db:5557/service"
+            - name: SPRING_DATASOURCE_USERNAME
+              value: "service"
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: "service"
+            - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
+              value: "http://discovery-service:8070/eureka"
+            - name: KEYCLOAK_SERVER_URL
+              value: "http://keycloak:8080"
+            - name: KEYCLOAK_REALM
+              value: "newyorktaxi"
+            - name: KEYCLOAK_CLIENT_ID
+              value: "newyorktaxiclient"
+            - name: KEYCLOAK_CLIENT_SECRET
+              value: "iy4qG7wWbdQVoPT2k5DoP1jF4eEeaLR3"
+            - name: MANAGEMENT_ZIPKIN_TRACING_ENDPOINT
+              value: "http://zipkin:9411/api/v2/spans"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-service-app
+spec:
+  type: LoadBalancer
+  selector:
+    app: user-service-app
+  ports:
+    - protocol: TCP
+      port: 8089
+      targetPort: 8089

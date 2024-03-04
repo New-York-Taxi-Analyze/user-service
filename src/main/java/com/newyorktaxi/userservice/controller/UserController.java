@@ -27,7 +27,7 @@ public class UserController {
 
     @PostMapping("/createUser")
     public User createUser(@RequestBody UserRequest request) {
-        log.info("UserHandler.createUser: {}", request);
+        log.info("Creating new user: {}", request);
         final UserParams userParams = userMapper.toUserParams(request);
         final User createdUser = createUserUseCase.execute(userParams);
 

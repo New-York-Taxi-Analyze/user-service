@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -33,6 +34,17 @@ public class KeycloakGateway {
     Keycloak keycloak;
 
     public String createKeycloakUser(UserParams userParams) {
+        final List<UserRepresentation> list = keycloak.realm(realm).users().list();
+        List<RoleRepresentation> roleRepresentations = keycloak.realm(realm).users().get(list.get(0).getId())
+                .roles().realmLevel().listEffective();
+        List<RoleRepresentation> newyorktaxiclient = keycloak.realm(realm).clients().findAll().stream()
+                .filter(clientRepresentation -> clientRepresentation.getClientId().equals("newyorktaxiclient"))
+                .findAny()
+                .map(clientRepresentation -> keycloak.realm(realm).users().get(list.get(0).getId())
+                        .roles().clientLevel(clientRepresentation.getId()).listEffective())
+                .get();
+        List<RoleRepresentation> roleRepresentations1 = keycloak.realm(realm).users().get(list.get(0).getId())
+                .roles().clientLevel("newyorktaxiclient").listEffective();
         final CredentialRepresentation passwordCredentials = setCredentialRepresentation(userParams.getPassword());
         final UserRepresentation userRepresentation = buildUserRepresentation(userParams);
         final UsersResource usersResource = keycloak.realm(realm).users();
